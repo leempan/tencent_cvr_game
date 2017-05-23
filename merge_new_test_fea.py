@@ -11,7 +11,6 @@ ind = 0
 while True:
 	end = False
 	A = []
-	ind = ind+1
 	for file in files:
 		line = file.readline()
 		if not line:
@@ -24,8 +23,16 @@ while True:
 		break
 	print ind
 	# print A,len(A)
+	if ind == 0:
+		s=''
+		for i in range(len(A)-1):
+	   		s=s+'f'+str(i)+','
+		s = s+str(len(A)-1)+'\n'
+		newfile.write(s) 
 	s =str(A)
 	newfile.write(s[1:len(s)-1]+'\n')
+	ind = ind+1
+	
 for f in files:
 	f.close()
 newfile.close()

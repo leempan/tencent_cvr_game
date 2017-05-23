@@ -5,9 +5,9 @@ from sklearn.linear_model import SGDClassifier
 import csv
 import numpy as np
 import time
-train_file = '/home/administrator/Limingpan/pre/merged_new_fea_train.csv'
-test_file = '/home/administrator/Limingpan/pre/merged_new_fea_test.csv'
-maxiter = 3
+train_file = 'merged_new_fea_train.csv'
+test_file = 'merged_new_fea_test.csv'
+maxiter = 1
 def sparse(x,number):
     sparse_x = a = np.zeros(number*len(x))
     iid = 0
@@ -25,6 +25,8 @@ def iter_minibatches(data_stream, minibatch_size=1000):
     reader = csv.reader(csvfile)
 
     for line in reader:
+        if line[0] == 'label':
+            continue;
         y.append(float(line[0]))
         numbers = sparse([int(x) for x in line[1:]],512)
         # print numbers.shape
@@ -39,11 +41,11 @@ def iter_minibatches(data_stream, minibatch_size=1000):
 
 
 def train(train_file):
-    sgd_clf = SGDClassifier(loss='log',penalty='l2',learning_rate='optimal',shuffle=True,class_weight={0:1,1:50},alpha=1)  
+    sgd_clf = SGDClassifier(loss='log',penalty='l2',learning_rate='optimal',shuffle=True,class_weight={0:0.97,1:0.03},alpha=0.2)  
 
     for it in range(maxiter):
         tick = time.time()
-        minibatch_train_iterators = iter_minibatches(train_file, minibatch_size=2000)
+        minibatch_train_iterators = iter_minibatches(train_file, minibatch_size=3000)
         for i, (X_train, y_train) in enumerate(minibatch_train_iterators):
             print X_train.shape
             print 'iter',it,',',i,'th minibatch training,',sum(y_train),'positive samples'
@@ -51,8 +53,8 @@ def train(train_file):
         tick1 = time.time()
         print 'Iter',it,'training finished. cost time:',tick1-tick,'seconds'
 
-#     with open('LR_classifier.pkl', 'wb') as fid:
-#         cPickle.dump(sgd_clf, fid)    
+    with open('LR_classifier.pkl', 'wb') as fid:
+        cPickle.dump(sgd_clf, fid)    
 def test(testfile):
     result = open('submission.csv','w')
     with open('LR_classifier.pkl', 'rb') as fid:
@@ -63,12 +65,15 @@ def test(testfile):
     result.write('instanceID,prob\n')
     id = 1
     for line in test_csv:
-        X = np.array([int(x) for x in line]).reshape(1,-1)
+        if line[0] == 'label' or line[0] == 'f0':
+            continue;
+
+        X = np.array(sparse([int(x) for x in line],512)).reshape(1,-1)
         # print X,X.shape
-        prob = sgd_clf.decision_function(X)
+        prob = sgd_clf.predict_proba(X)
         
         print str(id)+','+str(prob)
-        # result.write(str(id)+','+str(prob[0][1])+'\n')
+        result.write(str(id)+','+str(prob[0][1])+'\n')
         id = id+1
     result.close()
 # load it again

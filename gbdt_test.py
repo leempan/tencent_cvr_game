@@ -4,7 +4,7 @@ import scipy as sc
 import xgboost as xgb
 
 print 'preparing data...'
-test_data = '/home/administrator/Limingpan/pre/merged_test.csv'
+test_data = 'merged_test.csv'
 test_raw = pd.read_csv(test_data,header=0)
 test_X_creID = test_raw['creativeID'].as_matrix()
 test_X_userID = test_raw['userID'].as_matrix()

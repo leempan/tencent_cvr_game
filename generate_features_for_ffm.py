@@ -34,8 +34,10 @@ def gen_hashed_fm_feats(feats, nr_bins):
     return feats
 
 f = open(args['out_path'], 'w')
-
+ln = 0
 for row in csv.DictReader(open(args['csv_path'])):
+    ln = ln+1
+    print 'processing line',ln
     feats = []
 
     for feat in gen_feats(row):
@@ -44,5 +46,5 @@ for row in csv.DictReader(open(args['csv_path'])):
         feats.append((field, feat))
 
     feats = gen_hashed_fm_feats(feats, args['nr_bins'])
-    f.write(row['label'] + ' ' + ' '.join(feats) + '\n')
+    f.write((row['label'] if 'label' in row else '') + ' ' + ' '.join(feats) + '\n')
 

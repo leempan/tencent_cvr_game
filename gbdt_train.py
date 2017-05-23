@@ -4,7 +4,7 @@ import scipy as sc
 import xgboost as xgb
 from joblib import dump
 import  matplotlib.pyplot as plt
-train_data = '/home/administrator/Limingpan/pre/merged_train.csv'
+train_data = 'merged_train.csv'
 
 train_raw = pd.read_csv(train_data,header=0)
 train_Y = train_raw['label'].as_matrix()
@@ -42,7 +42,7 @@ def modelfilt(X,Y,params,useTrainCV=True,cv_fold=5,model_name='train',gen_new_fe
 		# train_new_feature.head()
 params = {'booster':'gbtree','max_depth':7,'eta':.02,'objective':'binary:logistic','verbose':0,
 			'subsample':1.0,'early_stoppping_rounds':100000,'seed':999,'eval_metric':'logloss','nthread':16,
-			'colsample_bytree':1,'min_child_weight':10,'gamma':4,'alpha':0.6,'max_delta_step':2,'scale_pos_weight':10,'n_estimators':30}
+			'colsample_bytree':1,'min_child_weight':10,'gamma':4,'alpha':0.6,'max_delta_step':2,'scale_pos_weight':10,'n_estimators':100}
 modelfilt(train_X,train_Y,params,model_name='none_id_fea.model',new_fea_filename='none_id_fea.txt',n_trees=100,cvfolds=10)
 
 train_X_creID = np.reshape(train_X_creID,(train_X_creID.shape[0],1))
